@@ -7,7 +7,95 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+import moment from 'moment';
+import {
+    Form,
+    HasError,
+    AlertError
+} from 'vform';
 
+window.Form = Form;
+Vue.component(HasError.name, HasError);
+Vue.component(AlertError.name, AlertError);
+// import Vue from 'vue'
+import VueRouter from 'vue-router';
+Vue.use(VueRouter);
+
+import VueProgressBar from 'vue-progressbar';
+Vue.use(VueProgressBar, {
+    color: 'rgb(143, 255, 199)',
+    failedColor: 'red',
+    height: '3px'
+});
+
+// ES6 Modules or TypeScript
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
+
+window.Toast = Toast;
+
+
+const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+});
+
+window.swalWithBootstrapButtons = swalWithBootstrapButtons;
+
+
+
+
+// CommonJS
+// const Swal = require('sweetalert2');
+
+let routes = [{
+        path: '/dashboard',
+        component: require('./components/dashboard.vue').default
+    },
+    {
+        path: '/profile',
+        component: require('./components/profile.vue').default
+    },
+    {
+        path: '/category',
+        component: require('./components/category.vue').default
+    },
+    {
+        path: '/user',
+        component: require('./components/user.vue').default
+    }
+]
+
+const router = new VueRouter({
+    mode: "history",
+    routes // short for `routes: routes`
+});
+
+Vue.filter('upText', function(text) {
+    // return text.toUpperCase();
+    return text.charAt(0).toUpperCase() + text.slice(1)
+});
+Vue.filter('myDate', function(created) {
+    return moment(created).format('MMMM Do YYYY');
+});
+
+
+window.Fire = new Vue();
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -29,4 +117,5 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
+    router
 });
