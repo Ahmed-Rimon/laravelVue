@@ -183,6 +183,7 @@ export default {
       editMode: false,
       users: {},
       form: new Form({
+        id: "",
         name: "",
         email: "",
         password: "",
@@ -211,6 +212,25 @@ export default {
       //   $("#addNewLabel").text("Edit User");
       //   $("#updateUser").text("Update User");
     },
+    updateUser() {
+      this.$Progress.start();
+
+      this.form
+        .put("api/user/" + this.form.id)
+        .then(() => {
+          Fire.$emit("ReloadTable");
+          $("#addNew").modal("hide");
+          Swal.fire(
+            "Updated!",
+            "User Information updated Successfully.",
+            "success"
+          );
+          this.$Progress.finish();
+        })
+        .catch(() => {
+          this.$Progress.fail();
+        });
+    },
     delateUser(id) {
       Swal.fire({
         title: "Are you sure?",
@@ -226,7 +246,7 @@ export default {
             .delete("api/user/" + id)
             .then(() => {
               Swal.fire("Deleted!", "Your file has been deleted.", "success");
-              Fire.$emit("AfterCreate");
+              Fire.$emit("ReloadTable");
             })
             .catch(() => {
               Swal.fire("Failed!", "There Were Something wrong.", "warning");
@@ -242,24 +262,13 @@ export default {
     loadUsers() {
       axios.get("api/user").then(({ data }) => (this.users = data.data));
     },
-    updateUser() {
-      this.$Progress.start();
 
-      this.form.put("api/user/{user}")
-      .then(()=>{
-          //
-      })
-      .catch((){
-        this.$Progress.fail();
-
-      });
-    },
     createUser() {
       this.$Progress.start();
       this.form
         .post("api/user")
         .then(() => {
-          Fire.$emit("AfterCreate");
+          Fire.$emit("ReloadTable");
           $("#addNew").modal("hide");
           Toast.fire({
             icon: "success",
@@ -272,7 +281,7 @@ export default {
   },
   created() {
     this.loadUsers();
-    Fire.$on("AfterCreate", () => {
+    Fire.$on("ReloadTable", () => {
       this.loadUsers();
     });
     // if i want to reload my page after every 3 sec then i need to use set interval
