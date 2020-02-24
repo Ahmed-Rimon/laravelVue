@@ -1,15 +1,9 @@
 <template>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-md-10">
         <div class="card">
-          <div class="card-header">Dashboard Component</div>
-
-          <div class="card-body">
-            <button class="btn btn-danger">
-              <i class="fa fa-trash-alt"></i> Click me
-            </button>
-          </div>
+          <h5>Dashboard</h5>
         </div>
       </div>
     </div>

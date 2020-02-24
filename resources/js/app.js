@@ -14,6 +14,14 @@ import {
     AlertError
 } from 'vform';
 
+
+//import Gate.js
+import Gate from "./Gate";
+
+Vue.prototype.$gate = new Gate(window.user);
+
+
+
 window.Form = Form;
 Vue.component(HasError.name, HasError);
 Vue.component(AlertError.name, AlertError);
@@ -82,14 +90,27 @@ let routes = [{
     {
         path: '/user',
         component: require('./components/user.vue').default
+    },
+
+    {
+        path: '*',
+        component: require('./components/404Page.vue').default
     }
+
 ]
 
 const router = new VueRouter({
     mode: "history",
     routes // short for `routes: routes`
+
 });
 
+
+//Change the text to upper case and format the date
+Vue.filter('AllText', function(text) {
+    // return text.toUpperCase();
+    return text.toUpperCase()
+});
 Vue.filter('upText', function(text) {
     // return text.toUpperCase();
     return text.charAt(0).toUpperCase() + text.slice(1)
@@ -126,9 +147,16 @@ Vue.component(
     require('./components/passport/PersonalAccessTokens.vue').default
 );
 
+Vue.component(
+    'not-found',
+    require('./components/404Page.vue').default
+);
 
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
+//LAravel vue pagination component
+Vue.component('pagination', require('laravel-vue-pagination'));
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -138,5 +166,17 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    data: {
+        search: ''
+    },
+    methods: {
+        searchit: _.debounce(() => {
+            Fire.$emit('searching');
+        }, 1000),
+        printInvoice() {
+            window.print();
+        }
+
+    }
 });

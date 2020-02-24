@@ -42,16 +42,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
-      <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+
+      <div class="input-group input-group-sm col-md-4">
+        <input class="form-control form-control-navbar" type="search" @keyup="searchit" v-model="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
+          <button class="btn btn-navbar" type="submit" @click="searchit">
             <i class="fa fa-search"></i>
           </button>
         </div>
       </div>
-    </form>
+
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
@@ -166,7 +166,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="{{url('./img/hac.png')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+          <a href="#" class="d-block">{{ Auth::user()->name }}
+            <p>{{ Auth::user()->type }}</p>
+        </a>
         </div>
       </div>
 {{-- <li class="nav-item {{ url()->current()==url('/') ? 'active' : '' }} nav-color" >
@@ -188,8 +190,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </router-link>
               </li>
 
+@can('isAdmin')
 
-          <li class="nav-item has-treeview menu-open">
+
+          <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fa fa-cog green"></i>
               <p>
@@ -213,15 +217,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </ul>
           </li>
 
-          <li class="nav-item">
-            <router-link to="/profile" class="nav-link">
-              <i class="nav-icon fas fa-user orange"></i>
-              <p>
-                Profile
 
-              </p>
-            </router-link>
-          </li>
+
+
 
           <li class="nav-item">
             <router-link to="/developer" class="nav-link">
@@ -232,7 +230,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </router-link>
           </li>
+ @endcan
 
+ <li class="nav-item">
+    <router-link to="/profile" class="nav-link">
+      <i class="nav-icon fas fa-user orange"></i>
+      <p>
+        Profile
+
+      </p>
+    </router-link>
+  </li>
           <li class="nav-item">
             {{-- <a href="#" class="nav-link">
               <i class="nav-icon fas fa-power-off"></i>
@@ -322,6 +330,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
   </footer>
 </div>
+@auth
+<script>
+    window.user = @json(auth()->user())
+</script>
+@endauth
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->

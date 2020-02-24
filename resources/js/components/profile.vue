@@ -20,11 +20,12 @@
         <div class="card card-widget widget-user">
           <!-- Add the bg color to the header using any of the bg-* classes -->
           <div class="widget-user-header text-white" style="background-image:url('./img/back.jpg')">
-            <h3 class="widget-user-username text-left">Elizabeth Pierce</h3>
-            <h5 class="widget-user-desc text-left">Web Designer</h5>
+            <h3 class="widget-user-username text-left">{{form.name | AllText}}</h3>
+            <h5 class="widget-user-desc text-left">{{form.type | upText}}</h5>
           </div>
           <div class="widget-user-image">
-            <img class="img-circle" src="img/my.jpg" alt="User Avatar" />
+            <!-- <img v-if="!is_photo_changed" class="img-circle" :src="getProfilePhoto()" alt="User Avatar" /> -->
+            <img class="img-circle" :src="'/img/profile/' + form.photo" :alt="form.name" />
           </div>
           <div class="card-footer">
             <div class="row">
@@ -92,7 +93,9 @@
                       v-model="form.name"
                       id="inputName"
                       placeholder="Name"
+                      :class="{ 'is-invalid': form.errors.has('name') }"
                     />
+                    <has-error :form="form" field="name"></has-error>
                   </div>
                 </div>
                 <div class="form-group">
@@ -104,7 +107,9 @@
                       id="inputEmail"
                       placeholder="Email"
                       v-model="form.email"
+                      :class="{ 'is-invalid': form.errors.has('email') }"
                     />
+                    <has-error :form="form" field="email"></has-error>
                   </div>
                 </div>
 
@@ -131,7 +136,7 @@
                   <label
                     for="password"
                     class="col-sm-12 control-label"
-                  >Passport (leave empty if not changing)</label>
+                  >🔒Password (leave empty if not changing)</label>
                   <div class="col-sm-12">
                     <input
                       v-model="form.password"
@@ -140,7 +145,9 @@
                       id="password"
                       class="form-control"
                       placeholder="Passport"
+                      :class="{ 'is-invalid': form.errors.has('password') }"
                     />
+                    <has-error :form="form" field="password"></has-error>
                   </div>
                 </div>
 
@@ -191,6 +198,15 @@ export default {
     console.log("Component mounted.");
   },
   methods: {
+    getProfilePhoto() {
+      let photo =
+        this.form.photo.length > 200
+          ? this.form.photo
+          : "img/profile/" + this.form.photo;
+
+      return photo;
+      //   return "img/profile/" + this.form.photo;
+    },
     updateInfo() {
       this.$Progress.start();
       this.form
@@ -200,6 +216,7 @@ export default {
             icon: "success",
             title: "User Updated successfully"
           });
+          Fire.$emit("ReloadTable");
           this.$Progress.finish();
         })
         .catch(() => {
@@ -224,6 +241,9 @@ export default {
   },
   created() {
     axios.get("api/profile").then(({ data }) => this.form.fill(data));
+    Fire.$on("ReloadTable", () => {
+      axios.get("api/profile").then(({ data }) => this.form.fill(data));
+    });
   }
 };
 </script>
